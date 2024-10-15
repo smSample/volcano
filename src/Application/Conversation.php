@@ -31,11 +31,11 @@ class Conversation
      * 大模型会话.
      * @param string $message 会话消息
      * @param bool $stream 是否以流式接口的形式返回数据，默认false
-     * @return array
+     * @return array|string
      */
     public function chat(string $message = '', bool $stream = false)
     {
-        return $this->client->setBody([
+        $client = $this->client->setBody([
             'model'    => $this->model,
             'stream'   => $stream,
             'messages' => [
@@ -44,7 +44,13 @@ class Conversation
                     'content' => $message
                 ]
             ]
-        ])->request(self::CHAT_PATH);
+        ]);
+        $stream && $client->setBody([
+            'stream_options' => [
+                'include_usage'=>true
+            ]
+        ]);
+        return $client->request(self::CHAT_PATH);
     }
 
     /**
@@ -55,7 +61,7 @@ class Conversation
      */
     public function botsChat(string $message = '', bool $stream = false)
     {
-        return $this->client->setBody([
+        $client = $this->client->setBody([
             'model'    => $this->model,
             'stream'   => $stream,
             'messages' => [
@@ -64,8 +70,15 @@ class Conversation
                     'content' => $message
                 ]
             ]
-        ])->request(self::BOTS_CHAT_PATH);
+        ]);
+        $stream && $client->setBody([
+            'stream_options' => [
+                'include_usage'=>true
+            ]
+        ]);
+        return $client->request(self::BOTS_CHAT_PATH);
     }
+
 
     /**
      * 获取会话所需token数

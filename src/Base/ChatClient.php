@@ -26,7 +26,7 @@ class ChatClient
     /**
      * @var LoggerInterface|mixed|null
      */
-    private LoggerInterface $logger;
+    private $logger;
 
     public function __construct(string $apiKey, $logger = null)
     {
@@ -43,13 +43,21 @@ class ChatClient
 
     public function setHeader(array $header): ChatClient
     {
-        $this->header = $header;
+        if ($this->header){
+            $this->header = array_merge($this->header, $body);
+        }else{
+            $this->header = $body;
+        }
         return $this;
     }
 
     public function setBody(array $body): ChatClient
     {
-        $this->body = $body;
+        if ($this->body){
+            $this->body = array_merge($this->body, $body);
+        }else{
+            $this->body = $body;
+        }
         return $this;
     }
 
