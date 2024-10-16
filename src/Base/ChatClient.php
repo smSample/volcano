@@ -92,9 +92,17 @@ class ChatClient
             $request  = new Request($this->method, $url, $headers, json_encode($this->body));
             $response = $this->client->send($request);
             if (isset($this->body['stream']) && $this->body['stream']) {
+                $data = '';
                 while (!$response->getBody()->eof()) {
-                    echo $response->getBody()->read(1024);
+                    $chunk = $response->getBody()->read(1024);
+                    $data.= $chunk;
+                    echo $chunk;
                 }
+                return [
+                    'code' => 200,
+                    'data' => $data,
+                    'msg'  => '请求成功'
+                ];
             } else {
                 return [
                     'code' => 200,
